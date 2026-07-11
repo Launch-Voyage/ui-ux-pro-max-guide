@@ -17,19 +17,22 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/variable/pretendardvariable.css">
 <script defer src="/_vercel/insights/script.js"></script>
 <style>
+  :root { --bg:#F4F7FE; --card:#FFFFFF; --heading:#1B2559; --text:#2B3674; --body:#5A6A8A; --muted:#707EAE; --muted2:#A3AED0; --faint:#B7C0DA; --border:#E9EDF7; --border2:#EFF2FA; --dot:#D9E1F2; --why-bg:#F7F9FE; --topbar-bg:rgba(244,247,254,0.85); }
+  body.dark { --bg:#0B1437; --card:#111C44; --heading:#FFFFFF; --text:#E2E8F7; --body:#B6C2E2; --muted:#A3AED0; --muted2:#8A97C4; --faint:#5C6B9E; --border:#232F5C; --border2:#1B2755; --dot:#2A3768; --why-bg:#0E1839; --topbar-bg:rgba(11,20,55,0.85); }
+  body { transition: background .25s ease, color .25s ease; }
   html { scroll-behavior: smooth; }
-  body { margin: 0; background: #F4F7FE; font-family: 'DM Sans','Pretendard',-apple-system,sans-serif; color: #2B3674; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--bg); font-family: 'DM Sans','Pretendard',-apple-system,sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
   * { box-sizing: border-box; }
   a { color: #4318FF; text-decoration: none; }
   ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-thumb { background: #D9E1F2; border-radius: 8px; border: 2px solid #F4F7FE; }
-  ::-webkit-scrollbar-thumb:hover { background: #A3AED0; }
+  ::-webkit-scrollbar-thumb { background: var(--dot); border-radius: 8px; border: 2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted2); }
   [id] { scroll-margin-top: 84px; }
 
   /* shell */
-  #sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 290px; background: #fff; display: flex; flex-direction: column; z-index: 40; box-shadow: 0px 18px 40px rgba(112,144,176,0.12); transition: transform .3s cubic-bezier(.4,0,.2,1); }
+  #sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 290px; background: var(--card); display: flex; flex-direction: column; z-index: 40; box-shadow: 0px 18px 40px rgba(112,144,176,0.12); transition: transform .3s cubic-bezier(.4,0,.2,1); }
   #main { margin-left: 290px; min-height: 100vh; }
-  #topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 60px; z-index: 30; background: rgba(244,247,254,0.85); backdrop-filter: blur(10px); align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid #E9EDF7; }
+  #topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 60px; z-index: 30; background: var(--topbar-bg); backdrop-filter: blur(10px); align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid var(--border); }
   #overlay { display: none; position: fixed; inset: 0; background: rgba(27,37,89,0.35); z-index: 35; }
   @media (max-width: 1023px) {
     #sidebar { transform: translateX(-110%); }
@@ -38,27 +41,28 @@
     #topbar { display: flex; }
     body.mobile-open #overlay { display: block; }
   }
-  .navlink { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 13px; font-size: 14.5px; font-weight: 600; color: #707EAE; background: transparent; transition: all .2s; }
-  .navlink .dot { width: 8px; height: 8px; border-radius: 3px; flex: none; background: #D9E1F2; }
-  .navlink.active { font-weight: 800; color: #1B2559; background: #F4F7FE; }
+  .navlink { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 13px; font-size: 14.5px; font-weight: 600; color: var(--muted); background: transparent; transition: all .2s; }
+  .navlink .dot { width: 8px; height: 8px; border-radius: 3px; flex: none; background: var(--dot); }
+  .navlink.active { font-weight: 800; color: var(--heading); background: var(--bg); }
   .navlink.active .dot { background: linear-gradient(135deg,#868CFF,#4318FF); }
-  .grouptab { border: none; cursor: pointer; font-family: inherit; padding: 9px 15px; border-radius: 10px; font-size: 13px; font-weight: 700; white-space: nowrap; color: #707EAE; background: transparent; transition: all .2s; }
+  .grouptab { border: none; cursor: pointer; font-family: inherit; padding: 9px 15px; border-radius: 10px; font-size: 13px; font-weight: 700; white-space: nowrap; color: var(--muted); background: transparent; transition: all .2s; }
   .grouptab.active { font-weight: 800; color: #fff; background: linear-gradient(135deg,#868CFF,#4318FF); box-shadow: 0 6px 14px rgba(67,24,255,0.30); }
 </style>
 </head>
 <body>
+<script>if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark");</script>
 <div style="min-height:100vh;">
 
   <!-- Mobile topbar -->
   <div id="topbar">
-    <button id="hamburger" aria-label="menu" style="width:44px;height:44px;border:none;background:#F4F7FE;border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;cursor:pointer;padding:0;">
-      <span style="width:18px;height:2px;background:#2B3674;border-radius:2px;display:block;"></span>
-      <span style="width:18px;height:2px;background:#2B3674;border-radius:2px;display:block;"></span>
-      <span style="width:18px;height:2px;background:#2B3674;border-radius:2px;display:block;"></span>
+    <button id="hamburger" aria-label="menu" style="width:44px;height:44px;border:none;background:var(--bg);border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;cursor:pointer;padding:0;">
+      <span style="width:18px;height:2px;background:var(--text);border-radius:2px;display:block;"></span>
+      <span style="width:18px;height:2px;background:var(--text);border-radius:2px;display:block;"></span>
+      <span style="width:18px;height:2px;background:var(--text);border-radius:2px;display:block;"></span>
     </button>
     <div style="display:flex;align-items:center;gap:10px;">
       <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#868CFF 0%,#4318FF 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;">U</div>
-      <span style="font-weight:800;color:#1B2559;font-size:16px;letter-spacing:-0.3px;">UI UX Pro Max</span>
+      <span style="font-weight:800;color:var(--heading);font-size:16px;letter-spacing:-0.3px;">UI UX Pro Max</span>
     </div>
     <div style="width:44px;"></div>
   </div>
@@ -71,17 +75,23 @@
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#868CFF 0%,#4318FF 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px;box-shadow:0 8px 18px rgba(67,24,255,0.35);">U</div>
         <div>
-          <div style="font-weight:800;color:#1B2559;font-size:17px;line-height:1.1;letter-spacing:-0.3px;">UI UX Pro Max</div>
-          <div style="font-size:11px;color:#A3AED0;font-weight:600;margin-top:3px;letter-spacing:0.2px;">디자인 룰 가이드</div>
+          <div style="font-weight:800;color:var(--heading);font-size:17px;line-height:1.1;letter-spacing:-0.3px;">UI UX Pro Max</div>
+          <div style="font-size:11px;color:var(--muted2);font-weight:600;margin-top:3px;letter-spacing:0.2px;">디자인 룰 가이드</div>
         </div>
       </div>
     </div>
-    <div style="height:1px;background:#E9EDF7;margin:0 24px;"></div>
+    <div style="height:1px;background:var(--border);margin:0 24px;"></div>
     <nav id="nav" style="padding:18px 16px;display:flex;flex-direction:column;gap:4px;"></nav>
-    <div style="margin-top:auto;padding:20px 24px;">
-      <div style="background:#F4F7FE;border-radius:16px;padding:16px;">
-        <div style="font-size:12px;font-weight:700;color:#1B2559;margin-bottom:6px;">161개 업종 룰</div>
-        <div style="font-size:11.5px;line-height:1.6;color:#707EAE;">입문자용 완전 해설. 검색과 필터로 원하는 업종을 빠르게 찾아보세요.</div>
+    <div style="margin-top:auto;padding:20px 24px;display:flex;flex-direction:column;gap:12px;">
+      <button id="themeToggle" style="display:flex;align-items:center;justify-content:space-between;width:100%;border:1px solid var(--border);background:var(--bg);border-radius:14px;padding:12px 16px;cursor:pointer;font-family:inherit;">
+        <span style="display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:700;color:var(--heading);"><span id="themeIcon">🌙</span><span id="themeLabel">다크 모드</span></span>
+        <span id="themeTrack" style="position:relative;width:38px;height:22px;border-radius:999px;background:var(--dot);transition:background .25s;flex:none;">
+          <span id="themeKnob" style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.2);transition:transform .25s;"></span>
+        </span>
+      </button>
+      <div style="background:var(--bg);border-radius:16px;padding:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--heading);margin-bottom:6px;">161개 업종 룰</div>
+        <div style="font-size:11.5px;line-height:1.6;color:var(--muted);">입문자용 완전 해설. 검색과 필터로 원하는 업종을 빠르게 찾아보세요.</div>
       </div>
     </div>
   </aside>
@@ -108,10 +118,10 @@
       <section id="howto" style="margin-top:44px;">
         <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:18px;">
           <span style="font-size:13px;font-weight:800;color:#4318FF;letter-spacing:1px;">01</span>
-          <h2 style="margin:0;font-size:26px;font-weight:800;color:#1B2559;letter-spacing:-0.4px;">이 자료 읽는 법</h2>
+          <h2 style="margin:0;font-size:26px;font-weight:800;color:var(--heading);letter-spacing:-0.4px;">이 자료 읽는 법</h2>
         </div>
-        <div style="background:#fff;border-radius:20px;padding:30px;box-shadow:0px 18px 40px rgba(112,144,176,0.12);">
-          <p style="margin:0 0 22px;font-size:15px;line-height:1.75;color:#707EAE;">아래 각 업종 카드는 6가지 항목으로 구성됩니다. 룰을 암기가 아니라 <b style="color:#2B3674;">이해</b>로 접근하도록 '왜'를 함께 담았습니다.</p>
+        <div style="background:var(--card);border-radius:20px;padding:30px;box-shadow:0px 18px 40px rgba(112,144,176,0.12);">
+          <p style="margin:0 0 22px;font-size:15px;line-height:1.75;color:var(--muted);">아래 각 업종 카드는 6가지 항목으로 구성됩니다. 룰을 암기가 아니라 <b style="color:var(--text);">이해</b>로 접근하도록 '왜'를 함께 담았습니다.</p>
           <div id="anatomy" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;"></div>
         </div>
       </section>
@@ -120,14 +130,14 @@
       <section id="glossary" style="margin-top:44px;">
         <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:18px;">
           <span style="font-size:13px;font-weight:800;color:#4318FF;letter-spacing:1px;">02</span>
-          <h2 style="margin:0;font-size:26px;font-weight:800;color:#1B2559;letter-spacing:-0.4px;">용어 사전</h2>
-          <span style="font-size:14px;color:#A3AED0;font-weight:600;">스타일 이름이 낯설다면</span>
+          <h2 style="margin:0;font-size:26px;font-weight:800;color:var(--heading);letter-spacing:-0.4px;">용어 사전</h2>
+          <span style="font-size:14px;color:var(--muted2);font-weight:600;">스타일 이름이 낯설다면</span>
         </div>
-        <div style="display:flex;gap:14px;align-items:flex-start;background:linear-gradient(135deg,rgba(67,24,255,0.05),rgba(4,190,254,0.08));border:1px solid #DBE4FF;border-radius:16px;padding:16px 18px;margin-bottom:20px;">
+        <div style="display:flex;gap:14px;align-items:flex-start;background:linear-gradient(135deg,rgba(67,24,255,0.05),rgba(4,190,254,0.08));border:1px solid var(--border);border-radius:16px;padding:16px 18px;margin-bottom:20px;">
           <div style="flex:none;width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#868CFF,#4318FF);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;">i</div>
           <div>
-            <div style="font-size:12.5px;font-weight:800;color:#1B2559;margin-bottom:4px;">참고</div>
-            <p style="margin:0;font-size:13px;line-height:1.7;color:#5A6A8A;">아래 각 용어의 <b style="color:#2B3674;">시각 예시</b>는 이해를 돕기 위해 추가한 참고용 표현입니다. 원본 GitHub 저장소(nextlevelbuilder/ui-ux-pro-max-skill)에는 동일한 예시가 포함되어 있지 않습니다.</p>
+            <div style="font-size:12.5px;font-weight:800;color:var(--heading);margin-bottom:4px;">참고</div>
+            <p style="margin:0;font-size:13px;line-height:1.7;color:var(--body);">아래 각 용어의 <b style="color:var(--text);">시각 예시</b>는 이해를 돕기 위해 추가한 참고용 표현입니다. 원본 GitHub 저장소(nextlevelbuilder/ui-ux-pro-max-skill)에는 동일한 예시가 포함되어 있지 않습니다.</p>
           </div>
         </div>
         <div id="glossaryGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;"></div>
@@ -137,12 +147,12 @@
       <section id="principles" style="margin-top:44px;">
         <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:18px;">
           <span style="font-size:13px;font-weight:800;color:#4318FF;letter-spacing:1px;">03</span>
-          <h2 style="margin:0;font-size:26px;font-weight:800;color:#1B2559;letter-spacing:-0.4px;">161개를 관통하는 6가지 원칙</h2>
+          <h2 style="margin:0;font-size:26px;font-weight:800;color:var(--heading);letter-spacing:-0.4px;">161개를 관통하는 6가지 원칙</h2>
         </div>
         <div id="principleGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;"></div>
-        <div style="margin-top:18px;display:flex;gap:14px;align-items:flex-start;background:linear-gradient(135deg,rgba(67,24,255,0.05),rgba(134,140,255,0.08));border:1px solid #E3E1FF;border-radius:18px;padding:20px 22px;">
+        <div style="margin-top:18px;display:flex;gap:14px;align-items:flex-start;background:linear-gradient(135deg,rgba(67,24,255,0.05),rgba(134,140,255,0.08));border:1px solid var(--border);border-radius:18px;padding:20px 22px;">
           <div style="flex:none;width:26px;height:26px;border-radius:8px;background:#4318FF;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;">!</div>
-          <p id="conditionReminder" style="margin:0;font-size:13.5px;line-height:1.72;color:#2B3674;"></p>
+          <p id="conditionReminder" style="margin:0;font-size:13.5px;line-height:1.72;color:var(--text);"></p>
         </div>
       </section>
 
@@ -150,32 +160,32 @@
       <section id="rules" style="margin-top:48px;">
         <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:8px;">
           <span style="font-size:13px;font-weight:800;color:#4318FF;letter-spacing:1px;">04</span>
-          <h2 style="margin:0;font-size:26px;font-weight:800;color:#1B2559;letter-spacing:-0.4px;">161개 업종별 룰</h2>
+          <h2 style="margin:0;font-size:26px;font-weight:800;color:var(--heading);letter-spacing:-0.4px;">161개 업종별 룰</h2>
         </div>
-        <p style="margin:0 0 20px;font-size:14px;color:#707EAE;">업종명·스타일·키워드로 검색하거나 번호(예: 42)로 바로 찾을 수 있습니다.</p>
+        <p style="margin:0 0 20px;font-size:14px;color:var(--muted);">업종명·스타일·키워드로 검색하거나 번호(예: 42)로 바로 찾을 수 있습니다.</p>
 
         <!-- Controls -->
-        <div style="position:sticky;top:0;z-index:20;background:#F4F7FE;padding:12px 0 16px;margin-bottom:6px;">
+        <div style="position:sticky;top:0;z-index:20;background:var(--bg);padding:12px 0 16px;margin-bottom:6px;">
           <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
             <div style="flex:1 1 260px;position:relative;">
-              <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#A3AED0;font-size:16px;">⌕</span>
-              <input id="search" placeholder="업종, 스타일, 키워드 검색…" style="width:100%;height:48px;border:1px solid #E9EDF7;background:#fff;border-radius:14px;padding:0 16px 0 40px;font-size:14.5px;color:#2B3674;font-family:inherit;outline:none;box-shadow:0px 8px 20px rgba(112,144,176,0.08);" />
+              <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted2);font-size:16px;">⌕</span>
+              <input id="search" placeholder="업종, 스타일, 키워드 검색…" style="width:100%;height:48px;border:1px solid var(--border);background:var(--card);border-radius:14px;padding:0 16px 0 40px;font-size:14.5px;color:var(--text);font-family:inherit;outline:none;box-shadow:0px 8px 20px rgba(112,144,176,0.08);" />
             </div>
-            <div id="groupTabs" style="display:flex;gap:6px;background:#fff;border-radius:14px;padding:5px;box-shadow:0px 8px 20px rgba(112,144,176,0.08);"></div>
+            <div id="groupTabs" style="display:flex;gap:6px;background:var(--card);border-radius:14px;padding:5px;box-shadow:0px 8px 20px rgba(112,144,176,0.08);"></div>
           </div>
-          <div style="margin-top:12px;font-size:13px;color:#707EAE;font-weight:600;"><span id="shownCount" style="color:#4318FF;font-weight:800;">0</span>개 표시 중 <span style="color:#A3AED0;">/ 전체 <span id="totalCount">0</span>개</span></div>
+          <div style="margin-top:12px;font-size:13px;color:var(--muted);font-weight:600;"><span id="shownCount" style="color:#4318FF;font-weight:800;">0</span>개 표시 중 <span style="color:var(--muted2);">/ 전체 <span id="totalCount">0</span>개</span></div>
         </div>
 
         <div id="cardGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;"></div>
 
-        <div id="noResults" style="display:none;text-align:center;padding:60px 20px;color:#A3AED0;">
+        <div id="noResults" style="display:none;text-align:center;padding:60px 20px;color:var(--muted2);">
           <div style="font-size:40px;margin-bottom:12px;">⌕</div>
-          <div style="font-size:15px;font-weight:700;color:#707EAE;">검색 결과가 없습니다</div>
+          <div style="font-size:15px;font-weight:700;color:var(--muted);">검색 결과가 없습니다</div>
           <div style="font-size:13px;margin-top:6px;">다른 키워드로 검색해 보세요.</div>
         </div>
       </section>
 
-      <footer style="margin-top:56px;padding-top:24px;border-top:1px solid #E9EDF7;font-size:12.5px;line-height:1.7;color:#A3AED0;">
+      <footer style="margin-top:56px;padding-top:24px;border-top:1px solid var(--border);font-size:12.5px;line-height:1.7;color:var(--muted2);">
         이 자료는 nextlevelbuilder/ui-ux-pro-max-skill (MIT License)의 ui-reasoning.csv 데이터를 한국어로 번역하고 해설을 더한 것입니다. 실제 헥스 팔레트·폰트 페어링·UI 스타일 정의 전체는 원본 저장소의 data 폴더에서 확인할 수 있습니다.
       </footer>
 
@@ -198,6 +208,22 @@ const closeMobile = () => { sidebar.classList.remove("open"); document.body.clas
 document.getElementById("hamburger").onclick = () => { sidebar.classList.toggle("open"); document.body.classList.toggle("mobile-open"); };
 document.getElementById("overlay").onclick = closeMobile;
 
+/* ---- theme toggle ---- */
+const themeBtn = document.getElementById("themeToggle");
+function syncTheme() {
+  const dark = document.body.classList.contains("dark");
+  document.getElementById("themeIcon").textContent = dark ? "☀️" : "🌙";
+  document.getElementById("themeLabel").textContent = dark ? "라이트 모드" : "다크 모드";
+  document.getElementById("themeKnob").style.transform = dark ? "translateX(16px)" : "translateX(0)";
+  document.getElementById("themeTrack").style.background = dark ? "#4318FF" : "var(--dot)";
+}
+themeBtn.onclick = () => {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+  syncTheme();
+};
+syncTheme();
+
 /* ---- sidebar nav + scrollspy ---- */
 const sections = [["intro","소개"],["howto","읽는 법"],["glossary","용어 사전"],["principles","6가지 원칙"],["rules","161개 룰"]];
 const nav = document.getElementById("nav");
@@ -218,11 +244,11 @@ document.getElementById("stats").innerHTML = [
   { name: "디자인 스타일 용어", value: "20종", tag: "용어", grad: "linear-gradient(135deg,#4481EB 0%,#04BEFE 100%)" },
   { name: "관통하는 핵심 원칙", value: "6가지", tag: "원칙", grad: "linear-gradient(135deg,#01B574 0%,#0AC7C7 100%)" },
 ].map((st) => `
-  <div style="display:flex;align-items:center;gap:16px;background:#fff;border-radius:20px;padding:20px 22px;box-shadow:0px 18px 40px rgba(112,144,176,0.12);">
+  <div style="display:flex;align-items:center;gap:16px;background:var(--card);border-radius:20px;padding:20px 22px;box-shadow:0px 18px 40px rgba(112,144,176,0.12);">
     <div style="flex:none;width:56px;height:56px;border-radius:16px;background:${st.grad};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;letter-spacing:-0.4px;">${st.tag}</div>
     <div>
-      <div style="font-size:13px;font-weight:600;color:#A3AED0;margin-bottom:3px;">${st.name}</div>
-      <div style="font-size:22px;font-weight:800;color:#1B2559;letter-spacing:-0.4px;">${st.value}</div>
+      <div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:3px;">${st.name}</div>
+      <div style="font-size:22px;font-weight:800;color:var(--heading);letter-spacing:-0.4px;">${st.value}</div>
     </div>
   </div>`).join("");
 
@@ -236,11 +262,11 @@ const anatomy = [
   { k: "룰", title: "필수 · 금지", desc: "반드시 구현할 것과 하면 안 되는 것. '왜'에 이유가 함께 담깁니다." },
 ];
 document.getElementById("anatomy").innerHTML = anatomy.map((a) => `
-  <div style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:#F4F7FE;border-radius:16px;">
-    <div style="flex:none;width:40px;height:40px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:${a.k.length>1?"11":"14"}px;color:#4318FF;box-shadow:0 4px 10px rgba(112,144,176,0.14);">${a.k}</div>
+  <div style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:var(--bg);border-radius:16px;">
+    <div style="flex:none;width:40px;height:40px;border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:${a.k.length>1?"11":"14"}px;color:#4318FF;box-shadow:0 4px 10px rgba(112,144,176,0.14);">${a.k}</div>
     <div>
-      <div style="font-weight:700;color:#1B2559;font-size:14.5px;margin-bottom:4px;">${a.title}</div>
-      <div style="font-size:13px;line-height:1.6;color:#707EAE;">${a.desc}</div>
+      <div style="font-weight:700;color:var(--heading);font-size:14.5px;margin-bottom:4px;">${a.title}</div>
+      <div style="font-size:13px;line-height:1.6;color:var(--muted);">${a.desc}</div>
     </div>
   </div>`).join("");
 
@@ -346,25 +372,25 @@ function preview(term) {
 document.getElementById("glossaryGrid").innerHTML = glossary.map((g) => {
   const p = preview(g.term);
   return `
-  <div style="background:#fff;border-radius:18px;padding:20px 22px;box-shadow:0px 10px 30px rgba(112,144,176,0.10);border:1px solid #EFF2FA;">
+  <div style="background:var(--card);border-radius:18px;padding:20px 22px;box-shadow:0px 10px 30px rgba(112,144,176,0.10);border:1px solid var(--border2);">
     <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;">
       <span style="width:9px;height:9px;border-radius:3px;background:linear-gradient(135deg,#868CFF,#4318FF);flex:none;"></span>
-      <span style="font-weight:800;color:#1B2559;font-size:15.5px;letter-spacing:-0.2px;">${esc(g.term)}</span>
+      <span style="font-weight:800;color:var(--heading);font-size:15.5px;letter-spacing:-0.2px;">${esc(g.term)}</span>
     </div>
-    <div style="font-size:13.5px;line-height:1.72;color:#707EAE;">${esc(g.desc)}</div>
+    <div style="font-size:13.5px;line-height:1.72;color:var(--muted);">${esc(g.desc)}</div>
     <div style="${css(p.boxStyle)}">${p.layers.map((ly) => `<div style="${css(ly.style)}">${ly.text || ""}</div>`).join("")}</div>
-    <div style="margin-top:7px;font-size:10.5px;color:#B7C0DA;font-weight:600;text-align:right;">예시 · 참고용</div>
+    <div style="margin-top:7px;font-size:10.5px;color:var(--faint);font-weight:600;text-align:right;">예시 · 참고용</div>
   </div>`;
 }).join("");
 
 /* ---- principles ---- */
 document.getElementById("principleGrid").innerHTML = principles.map((p) => `
-  <div style="position:relative;background:#fff;border-radius:20px;padding:26px 26px 24px;box-shadow:0px 12px 34px rgba(112,144,176,0.11);overflow:hidden;">
+  <div style="position:relative;background:var(--card);border-radius:20px;padding:26px 26px 24px;box-shadow:0px 12px 34px rgba(112,144,176,0.11);overflow:hidden;">
     <div style="position:absolute;top:16px;right:22px;font-size:56px;font-weight:800;color:#F4F7FE;line-height:1;">${String(p.n).padStart(2,"0")}</div>
     <div style="position:relative;">
       <div style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#868CFF,#4318FF);color:#fff;font-weight:800;font-size:15px;margin-bottom:14px;">${p.n}</div>
-      <h3 style="margin:0 0 10px;font-size:18px;font-weight:800;color:#1B2559;letter-spacing:-0.3px;">${esc(p.title)}</h3>
-      <p style="margin:0;font-size:13.8px;line-height:1.75;color:#707EAE;">${esc(p.body)}</p>
+      <h3 style="margin:0 0 10px;font-size:18px;font-weight:800;color:var(--heading);letter-spacing:-0.3px;">${esc(p.title)}</h3>
+      <p style="margin:0;font-size:13.8px;line-height:1.75;color:var(--muted);">${esc(p.body)}</p>
     </div>
   </div>`).join("");
 document.getElementById("conditionReminder").textContent = conditionReminder;
@@ -403,33 +429,33 @@ function renderCards() {
     const isMust = r.extra && r.extra.label === "필수";
     const industry = r.group === "industry";
     return `
-    <div style="display:flex;flex-direction:column;gap:15px;background:#fff;border-radius:20px;padding:22px;box-shadow:0px 12px 34px rgba(112,144,176,0.11);border:1px solid #EFF2FA;">
+    <div style="display:flex;flex-direction:column;gap:15px;background:var(--card);border-radius:20px;padding:22px;box-shadow:0px 12px 34px rgba(112,144,176,0.11);border:1px solid var(--border2);">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
         <div style="display:flex;align-items:center;gap:11px;min-width:0;">
-          <span style="flex:none;font-size:12.5px;font-weight:800;color:#4318FF;background:#F4F7FE;padding:6px 10px;border-radius:9px;letter-spacing:0.4px;">${String(r.id).padStart(3,"0")}</span>
-          <span style="font-weight:800;color:#1B2559;font-size:17px;line-height:1.25;letter-spacing:-0.3px;">${esc(r.name)}</span>
+          <span style="flex:none;font-size:12.5px;font-weight:800;color:#4318FF;background:var(--bg);padding:6px 10px;border-radius:9px;letter-spacing:0.4px;">${String(r.id).padStart(3,"0")}</span>
+          <span style="font-weight:800;color:var(--heading);font-size:17px;line-height:1.25;letter-spacing:-0.3px;">${esc(r.name)}</span>
         </div>
         <span style="flex:none;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px;letter-spacing:0.3px;color:${industry?"#4318FF":"#0B8A6B"};background:${industry?"#EBE8FF":"#DCFBEF"};">${industry?"업종":"앱"}</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;">
         ${r.palette.map((hex,i) => `
         <div style="display:flex;flex-direction:column;gap:5px;">
-          <div style="height:34px;border-radius:9px;border:1px solid #E9EDF7;background:${hex};"></div>
-          <div style="font-size:9.5px;font-weight:700;color:#A3AED0;text-align:center;">${paletteLabels[i]}</div>
-          <div style="font-size:8.5px;color:#B7C0DA;text-align:center;letter-spacing:-0.2px;">${hex}</div>
+          <div style="height:34px;border-radius:9px;border:1px solid var(--border);background:${hex};"></div>
+          <div style="font-size:9.5px;font-weight:700;color:var(--muted2);text-align:center;">${paletteLabels[i]}</div>
+          <div style="font-size:8.5px;color:var(--faint);text-align:center;letter-spacing:-0.2px;">${hex}</div>
         </div>`).join("")}
       </div>
-      <div style="background:#F7F9FE;border-radius:14px;padding:14px 16px;border:1px solid #EFF2FA;">
+      <div style="background:var(--why-bg);border-radius:14px;padding:14px 16px;border:1px solid var(--border2);">
         <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
           <span style="font-size:11px;font-weight:800;color:#4318FF;background:#EBE8FF;padding:3px 8px;border-radius:7px;">왜</span>
         </div>
-        <p style="margin:0;font-size:13.5px;line-height:1.72;color:#5A6A8A;">${esc(r.why)}</p>
+        <p style="margin:0;font-size:13.5px;line-height:1.72;color:var(--body);">${esc(r.why)}</p>
       </div>
       <div style="display:flex;flex-direction:column;gap:9px;">
         ${[["패턴",r.pattern,false],["스타일",r.style,true],["컬러",r.color,false],["타이포",r.typo,false],["효과",r.effect,false]].map(([k,v,bold]) => `
         <div style="display:grid;grid-template-columns:58px 1fr;gap:10px;align-items:baseline;">
-          <span style="font-size:11.5px;font-weight:800;color:#A3AED0;">${k}</span>
-          <span style="font-size:13.5px;color:#2B3674;line-height:1.5;${bold?"font-weight:600;":""}">${esc(v)}</span>
+          <span style="font-size:11.5px;font-weight:800;color:var(--muted2);">${k}</span>
+          <span style="font-size:13.5px;color:var(--text);line-height:1.5;${bold?"font-weight:600;":""}">${esc(v)}</span>
         </div>`).join("")}
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;padding-top:3px;">
