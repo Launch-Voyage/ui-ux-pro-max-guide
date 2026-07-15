@@ -140,7 +140,17 @@
             <p style="margin:0;font-size:13px;line-height:1.7;color:var(--body);">아래 각 용어의 <b style="color:var(--text);">시각 예시</b>는 이해를 돕기 위해 추가한 참고용 표현입니다. 원본 GitHub 저장소(nextlevelbuilder/ui-ux-pro-max-skill)에는 동일한 예시가 포함되어 있지 않습니다.</p>
           </div>
         </div>
+        <h3 style="margin:0 0 14px;font-size:17px;font-weight:800;color:var(--heading);">대표 20종 <span style="font-size:13px;font-weight:600;color:var(--muted2);">— 시각 예시 포함</span></h3>
         <div id="glossaryGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;"></div>
+
+        <!-- 84종 전체 카탈로그 -->
+        <div style="margin-top:34px;">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:14px;">
+            <h3 style="margin:0;font-size:17px;font-weight:800;color:var(--heading);">전체 84종 카탈로그 <span style="font-size:13px;font-weight:600;color:var(--muted2);">— 스킬이 보유한 스타일 데이터 전수</span></h3>
+            <div id="catalogTabs" style="display:flex;gap:6px;background:var(--card);border-radius:12px;padding:4px;box-shadow:0px 8px 20px rgba(112,144,176,0.08);"></div>
+          </div>
+          <div id="catalogGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;"></div>
+        </div>
       </section>
 
       <!-- PRINCIPLES -->
@@ -241,7 +251,7 @@ sections.forEach(([id]) => { const el = document.getElementById(id); if (el) spy
 /* ---- stats ---- */
 document.getElementById("stats").innerHTML = [
   { name: "수록된 업종 · 앱", value: "161개", tag: "업종", grad: "linear-gradient(135deg,#868CFF 0%,#4318FF 100%)" },
-  { name: "디자인 스타일 용어", value: "20종", tag: "용어", grad: "linear-gradient(135deg,#4481EB 0%,#04BEFE 100%)" },
+  { name: "디자인 스타일", value: "84종", tag: "용어", grad: "linear-gradient(135deg,#4481EB 0%,#04BEFE 100%)" },
   { name: "관통하는 핵심 원칙", value: "6가지", tag: "원칙", grad: "linear-gradient(135deg,#01B574 0%,#0AC7C7 100%)" },
 ].map((st) => `
   <div style="display:flex;align-items:center;gap:16px;background:var(--card);border-radius:20px;padding:20px 22px;box-shadow:0px 18px 40px rgba(112,144,176,0.12);">
@@ -474,6 +484,35 @@ function renderCards() {
   }).join("");
 }
 renderCards();
+
+/* ---- 84종 전체 카탈로그 ---- */
+(function(){
+  const TYPES = [["all","전체 84"],["general","시각·인터랙션 49"],["landing","랜딩 패턴 8"],["dash","대시보드 10"],["mobile","모바일 17"]];
+  const tabsEl = document.getElementById("catalogTabs");
+  const gridEl = document.getElementById("catalogGrid");
+  if(!tabsEl || !gridEl || typeof styleCatalog === "undefined") return;
+  let cur = "all";
+  function renderTabs(){
+    tabsEl.innerHTML = TYPES.map(([k,label]) =>
+      `<button data-k="${k}" style="border:0;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:700;padding:7px 13px;border-radius:9px;transition:.15s;
+        background:${k===cur ? "linear-gradient(135deg,#868CFF,#4318FF)" : "transparent"};color:${k===cur ? "#fff" : "var(--muted)"};">${label}</button>`).join("");
+    tabsEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { cur = b.dataset.k; renderTabs(); renderGrid(); }));
+  }
+  function renderGrid(){
+    const items = styleCatalog.filter(e => cur === "all" || e.type === cur);
+    gridEl.innerHTML = items.map(e => `
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:0px 10px 24px rgba(112,144,176,0.08);">
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <b style="font-size:14.5px;color:var(--heading);">${e.kr}</b>
+          <span style="font-size:11.5px;color:var(--muted2);font-weight:600;">${e.en}</span>
+        </div>
+        <p style="margin:0 0 5px;font-size:12.5px;line-height:1.6;color:var(--body);"><b style="color:#05CD99;">✓</b> ${e.good}</p>
+        <p style="margin:0;font-size:12.5px;line-height:1.6;color:var(--muted);"><b style="color:#EE5D50;">✕</b> ${e.avoid}</p>
+      </div>`).join("");
+  }
+  renderTabs(); renderGrid();
+})();
+
 </script>
 </body>
 </html>
