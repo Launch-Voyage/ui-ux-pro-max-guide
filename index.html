@@ -485,12 +485,187 @@ function renderCards() {
 }
 renderCards();
 
-/* ---- 84종 전체 카탈로그 ---- */
+/* ---- 84종 전체 카탈로그 (+비주얼 예시) ---- */
 (function(){
   const TYPES = [["all","전체 84"],["general","시각·인터랙션 49"],["landing","랜딩 패턴 8"],["dash","대시보드 10"],["mobile","모바일 17"]];
   const tabsEl = document.getElementById("catalogTabs");
   const gridEl = document.getElementById("catalogGrid");
   if(!tabsEl || !gridEl || typeof styleCatalog === "undefined") return;
+
+  /* ── 미니 프리뷰 빌더 ── */
+  const BOX = 'position:relative;height:64px;border-radius:10px;overflow:hidden;margin-top:12px;border:1px solid #EFF2FA;';
+  const A = 'position:absolute;';
+  const scene = (bg, inner) => `<div style="${BOX}background:${bg};">${inner}</div>`;
+  const lineDot = (bg,l,d) => scene(bg, `<div style="${A}left:20%;top:30px;width:36%;height:2px;background:${l};"></div><div style="${A}right:24%;top:26px;width:8px;height:8px;border-radius:50%;background:${d};"></div>`);
+  const blocks = (bg,cs) => scene(bg, cs.map((c,i)=>`<div style="${A}left:${12+i*22}%;top:20px;width:16%;height:26px;border-radius:5px;background:${c};"></div>`).join(''));
+  const darkGlow = (acc) => scene('#0B0B12', `<div style="${A}inset:14px;border-radius:8px;border:1px solid #1E293B;"></div><div style="${A}left:26%;top:30px;width:46%;height:3px;border-radius:2px;background:${acc};box-shadow:0 0 10px ${acc};"></div>`);
+  const neonLines = (bg,c1,c2) => scene(bg, `<div style="${A}left:16%;top:22px;width:38%;height:3px;background:${c1};box-shadow:0 0 8px ${c1};"></div><div style="${A}left:32%;top:38px;width:40%;height:3px;background:${c2};box-shadow:0 0 8px ${c2};"></div>`);
+  const glass = (grad) => scene(grad, `<div style="${A}top:-8px;left:22%;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.5);"></div><div style="${A}inset:13px;border-radius:8px;background:rgba(255,255,255,.25);backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,.6);"></div>`);
+  const blob = (grad) => scene(grad, `<div style="${A}inset:11px;border-radius:44% 56% 52% 48%/52% 48% 52% 48%;background:rgba(255,255,255,.24);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.7);"></div>`);
+  const neu = (bg,sh1,sh2) => scene(bg, `<div style="${A}left:30%;top:14px;width:40%;height:36px;border-radius:11px;background:${bg};box-shadow:5px 5px 10px ${sh1},-5px -5px 10px ${sh2};"></div>`);
+  const clay = (bg,c,shadow) => scene(bg, `<div style="${A}left:30%;top:11px;width:40%;height:42px;border-radius:16px;background:${c};box-shadow:inset 3px 4px 6px rgba(255,255,255,.55),inset -3px -4px 7px ${shadow},4px 7px 13px ${shadow};"></div>`);
+  const brutal = (bg,label) => scene(bg, `<div style="${A}left:24%;top:13px;width:44%;height:36px;background:#fff;border:3px solid #000;box-shadow:5px 5px 0 #000;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#000;letter-spacing:1px;">${label}</div>`);
+  const sphere = (c1,c2,bg) => scene(bg, `<div style="${A}left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:radial-gradient(circle at 32% 28%,${c1},${c2});box-shadow:0 8px 16px rgba(0,0,0,.3);"></div>`);
+  const typo = (bg,color,txt,font,extra) => scene(bg, `<div style="${A}inset:0;display:flex;align-items:center;justify-content:center;font-family:${font};font-weight:800;font-size:24px;color:${color};${extra||''}">${txt}</div>`);
+  const bento = () => scene('#F4F7FE', `<div style="${A}left:10%;top:10px;width:34%;height:44px;border-radius:8px;background:#4318FF;"></div><div style="${A}left:48%;top:10px;width:40%;height:19px;border-radius:6px;background:#04BEFE;"></div><div style="${A}left:48%;top:35px;width:40%;height:19px;border-radius:6px;background:#01B574;"></div>`);
+  const editorial = (bg,ink) => scene(bg, `<div style="${A}left:12%;top:12px;width:30%;height:8px;background:${ink};"></div>` + [0,1,2].map(i=>`<div style="${A}left:12%;top:${30+i*9}px;width:${72-i*10}%;height:3px;background:${ink};opacity:.35;"></div>`).join(''));
+  const chat = () => scene('#FAF5FF', `<div style="${A}left:11%;top:11px;width:46%;height:22px;border-radius:12px 12px 12px 3px;background:#7C3AED;"></div>` + [0,1,2].map(i=>`<div style="${A}right:${12+i*7}%;top:40px;width:7px;height:7px;border-radius:50%;background:#A78BFA;opacity:${1-i*.25};"></div>`).join(''));
+  const bars = (bg,cs,glow) => scene(bg, cs.map((c,i)=>`<div style="${A}left:${14+i*17}%;bottom:12px;width:10%;height:${16+((i*17)%32)}px;border-radius:3px 3px 0 0;background:${c};${glow?`box-shadow:0 0 8px ${c};`:''}"></div>`).join(''));
+  const lineChart = (bg,c,dash) => scene(bg, `<svg style="${A}inset:10px;" width="100%" height="44" viewBox="0 0 100 44" preserveAspectRatio="none"><polyline fill="none" stroke="${c}" stroke-width="3" points="0,36 20,28 40,32 60,18 80,22 100,8" ${dash?'stroke-dasharray="6 4"':''}/></svg>`);
+  const heatmap = () => scene('#fff', [0,1,2,3,4,5,6,7].map(i=>{const cols=['#DBEAFE','#93C5FD','#3B82F6','#1D4ED8'];return `<div style="${A}left:${14+(i%4)*19}%;top:${12+Math.floor(i/4)*22}px;width:15%;height:18px;border-radius:3px;background:${cols[(i*3)%4]};"></div>`}).join(''));
+  const gauge = () => scene('#fff', `<div style="${A}left:50%;top:38px;width:52px;height:26px;margin-left:-26px;border-radius:52px 52px 0 0;border:7px solid #E0E5F2;border-bottom:0;"></div><div style="${A}left:50%;top:38px;width:52px;height:26px;margin-left:-26px;border-radius:52px 52px 0 0;border:7px solid #4318FF;border-bottom:0;clip-path:polygon(0 0,58% 0,58% 100%,0 100%);"></div>`);
+  const pulse = () => scene('#0B1220', `<svg style="${A}inset:10px;" width="100%" height="44" viewBox="0 0 100 44" preserveAspectRatio="none"><polyline fill="none" stroke="#22C55E" stroke-width="2.5" points="0,22 18,22 24,8 32,36 40,22 62,22 68,12 76,32 84,22 100,22"/></svg><div style="${A}right:10px;top:8px;width:7px;height:7px;border-radius:50%;background:#22C55E;box-shadow:0 0 8px #22C55E;"></div>`);
+  const funnel = () => scene('#fff', [0,1,2].map(i=>`<div style="${A}left:${18+i*8}%;top:${11+i*15}px;width:${64-i*16}%;height:11px;border-radius:3px;background:${['#4318FF','#6A5AE0','#A3AED0'][i]};"></div>`).join(''));
+  const candles = () => scene('#0B1220', [0,1,2,3,4].map(i=>{const up=i%2===0;const c=up?'#3182F6':'#F04452';const t=12+((i*13)%14);return `<div style="${A}left:${16+i*15}%;top:${t-6}px;width:2px;height:${30}px;background:${c};"></div><div style="${A}left:${13.5+i*15}%;top:${t}px;width:7%;height:15px;border-radius:2px;background:${c};"></div>`}).join(''));
+  const rows = (bg,c) => scene(bg, [0,1,2].map(i=>`<div style="${A}left:10%;top:${11+i*15}px;width:80%;height:10px;border-radius:3px;background:${c};opacity:${.9-i*.3};"></div>`).join(''));
+  const hero = () => scene('#F4F7FE', `<div style="${A}left:22%;top:13px;width:56%;height:9px;border-radius:3px;background:#1B2559;"></div><div style="${A}left:32%;top:28px;width:36%;height:5px;border-radius:2px;background:#A3AED0;"></div><div style="${A}left:39%;top:41px;width:22%;height:13px;border-radius:6px;background:#4318FF;"></div>`);
+  const cta = () => scene('#fff', `<div style="${A}left:12%;top:16px;width:44%;height:12px;border-radius:4px;border:1.5px solid #E0E5F2;"></div><div style="${A}left:12%;top:36px;width:44%;height:12px;border-radius:4px;border:1.5px solid #E0E5F2;"></div><div style="${A}right:10%;top:22px;width:26%;height:20px;border-radius:6px;background:#05CD99;"></div>`);
+  const featureGrid = () => scene('#F4F7FE', [0,1,2,3,4,5].map(i=>`<div style="${A}left:${12+(i%3)*27}%;top:${12+Math.floor(i/3)*23}px;width:22%;height:18px;border-radius:5px;background:#fff;border:1px solid #E0E5F2;"></div>`).join(''));
+  const testimonial = () => scene('#fff', `<div style="${A}left:12%;top:12px;width:50%;height:18px;border-radius:9px 9px 9px 2px;background:#EEF2FF;"></div><div style="${A}left:24%;top:36px;width:50%;height:18px;border-radius:9px 9px 2px 9px;background:#E6FAF4;"></div><div style="${A}right:9%;top:12px;font-size:11px;color:#FFB547;">★★★★★</div>`);
+  const demo = () => scene('#F4F7FE', `<div style="${A}inset:9px;border-radius:7px;background:#fff;border:1px solid #E0E5F2;"></div><div style="${A}left:14px;top:14px;display:flex;gap:3px;"><span style="width:5px;height:5px;border-radius:50%;background:#F04452;display:inline-block;"></span><span style="width:5px;height:5px;border-radius:50%;background:#FFB547;display:inline-block;"></span><span style="width:5px;height:5px;border-radius:50%;background:#05CD99;display:inline-block;"></span></div><div style="${A}left:50%;top:50%;width:0;height:0;margin:-6px 0 0 -4px;border-left:11px solid #4318FF;border-top:7px solid transparent;border-bottom:7px solid transparent;"></div>`);
+  const shield = () => scene('#F0F9FF', `<div style="${A}left:50%;top:50%;width:30px;height:34px;margin:-17px 0 0 -15px;background:#0369A1;clip-path:polygon(50% 0,100% 18%,100% 60%,50% 100%,0 60%,0 18%);"></div><div style="${A}left:50%;top:47%;margin:-4px 0 0 -6px;width:12px;height:7px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg);"></div>`);
+  const story = () => scene('#fff', [0,1,2].map(i=>`<div style="${A}left:${12+i*6}%;top:${10+i*17}px;width:${50-i*6}%;height:12px;border-radius:4px;background:${['#4318FF','#868CFF','#C7CCF8'][i]};"></div>`).join('') + `<div style="${A}right:12%;top:14px;width:2px;height:36px;background:#E0E5F2;"></div><div style="${A}right:11.4%;top:14px;width:6px;height:6px;border-radius:50%;background:#4318FF;"></div>`);
+  const phone = (inner) => scene('#EDF1F9', `<div style="${A}left:50%;top:7px;width:34px;height:58px;margin-left:-17px;border-radius:8px;background:#fff;border:2px solid #1B2559;overflow:hidden;">${inner}</div>`);
+  const pixels = () => scene('#0F172A', ['#F43F5E','#2563EB','#FBBF24','#22C55E'].map((c,i)=>`<div style="${A}left:${20+i*16}%;top:25px;width:13px;height:13px;background:${c};"></div>`).join(''));
+  const hud = () => scene('#04121A', `<div style="${A}left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:2px solid #22D3EE;box-shadow:0 0 10px #22D3EE;"></div>` + ['left:12px;top:10px;border-top:2px solid #22D3EE;border-left:2px solid #22D3EE;','right:12px;top:10px;border-top:2px solid #22D3EE;border-right:2px solid #22D3EE;','left:12px;bottom:10px;border-bottom:2px solid #22D3EE;border-left:2px solid #22D3EE;','right:12px;bottom:10px;border-bottom:2px solid #22D3EE;border-right:2px solid #22D3EE;'].map(pos=>`<div style="${A}width:12px;height:12px;${pos}"></div>`).join(''));
+  const cursorScene = () => scene('#101018', `<div style="${A}left:34%;top:20px;width:26px;height:26px;border-radius:50%;border:1.5px solid #A78BFA;"></div><div style="${A}left:52%;top:30px;width:0;height:0;border-left:11px solid #fff;border-top:5px solid transparent;border-bottom:9px solid transparent;transform:rotate(-14deg);filter:drop-shadow(0 2px 4px rgba(0,0,0,.6));"></div>`);
+  const voice = () => scene('#0B1220', [14,26,38,22,32,18,28].map((h,i)=>`<div style="${A}left:${22+i*8}%;top:${32-h/2}px;width:4px;height:${h}px;border-radius:2px;background:#38BDF8;"></div>`).join(''));
+  const cube = () => scene('#F4F7FE', `<div style="${A}left:50%;top:50%;width:30px;height:30px;margin:-19px 0 0 -15px;background:#4318FF;transform:rotate(45deg) skew(14deg,14deg);box-shadow:8px 8px 0 rgba(67,24,255,.25);"></div>`);
+  const mesh = () => scene('radial-gradient(60px 40px at 25% 30%,#F0ABFC,transparent),radial-gradient(70px 50px at 75% 30%,#818CF8,transparent),radial-gradient(80px 55px at 50% 90%,#38BDF8,transparent),#EDE9FE','');
+  const rgbsplit = () => scene('#0A0A12', `<div style="${A}left:29%;top:24px;font-weight:800;font-size:17px;color:#FF004D;opacity:.85;">GLITCH</div><div style="${A}left:31%;top:26px;font-weight:800;font-size:17px;color:#00E5FF;opacity:.85;">GLITCH</div><div style="${A}left:30%;top:25px;font-weight:800;font-size:17px;color:#fff;">GLITCH</div>`);
+  const film = () => scene('linear-gradient(135deg,#D9C8A9,#C4A67F)', `<div style="${A}inset:11px;background:#7A5C43;border-radius:2px;box-shadow:inset 0 0 14px rgba(0,0,0,.5);"></div><div style="${A}top:3px;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,#1B1512 0 8px,transparent 8px 14px);"></div><div style="${A}bottom:3px;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,#1B1512 0 8px,transparent 8px 14px);"></div>`);
+  const sketchy = () => scene('#FFFDF6', `<div style="${A}left:24%;top:14px;width:50%;height:34px;border:2px dashed #333;border-radius:255px 15px 225px 15px/15px 225px 15px 255px;"></div>`);
+  const terminal = () => scene('#0A0F0A', `<div style="${A}left:12px;top:14px;font-family:monospace;font-size:12px;color:#00FF41;">$ run --design</div><div style="${A}left:12px;top:34px;width:8px;height:13px;background:#00FF41;box-shadow:0 0 6px #00FF41;"></div>`);
+  const materialYou = () => scene('#F2ECF9', `<div style="${A}left:12%;top:14px;width:30%;height:36px;border-radius:18px 18px 6px 18px;background:#B69DF8;"></div><div style="${A}left:46%;top:14px;width:19%;height:36px;border-radius:50%;background:#7D5260;"></div><div style="${A}left:69%;top:14px;width:19%;height:36px;border-radius:10px;background:#CCC2DC;"></div>`);
+  const mono = () => scene('#fff', `<div style="${A}left:16%;top:14px;width:26px;height:36px;background:#000;"></div><div style="${A}left:46%;top:20px;width:38%;height:3px;background:#000;"></div><div style="${A}left:46%;top:32px;width:26%;height:3px;background:#000;opacity:.4;"></div>`);
+  const academia = () => scene('#F7F1E3', `<div style="${A}left:18%;top:12px;width:56%;height:9px;background:#3E2C1C;font-family:Georgia,serif;"></div>` + [0,1].map(i=>`<div style="${A}left:18%;top:${30+i*9}px;width:${58-i*12}%;height:3px;background:#3E2C1C;opacity:.4;"></div>`).join('') + `<div style="${A}right:14%;top:12px;width:14px;height:20px;background:#8B2635;"></div>`);
+  const spatial = () => scene('linear-gradient(135deg,#6B7A99,#3E4A63)', `<div style="${A}left:14%;top:16px;width:34%;height:32px;border-radius:8px;background:rgba(255,255,255,.3);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.5);transform:perspective(80px) rotateY(14deg);"></div><div style="${A}right:14%;top:12px;width:34%;height:32px;border-radius:8px;background:rgba(255,255,255,.22);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.4);transform:perspective(80px) rotateY(-14deg);"></div>`);
+  const eink = () => scene('#F5F2EA', [0,1,2,3].map(i=>`<div style="${A}left:14%;top:${12+i*12}px;width:${70-(i%2)*16}%;height:4px;background:#3B3A36;opacity:.75;"></div>`).join(''));
+  const zero = () => scene('#0E1116', `<div style="${A}left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:2px solid #38BDF8;"></div><div style="${A}left:50%;top:50%;width:8px;height:12px;margin:-8px 0 0 -4px;border-radius:4px;background:#38BDF8;"></div><div style="${A}left:50%;top:50%;margin:6px 0 0 -1px;width:2px;height:5px;background:#38BDF8;"></div>`);
+  const nature = () => scene('#F2F0E9', `<div style="${A}left:24%;top:12px;width:26px;height:40px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#5B7553;transform:rotate(-16deg);"></div><div style="${A}right:24%;top:20px;width:30%;height:3px;background:#8C7A5B;border-radius:2px;"></div><div style="${A}right:30%;top:32px;width:20%;height:3px;background:#8C7A5B;border-radius:2px;opacity:.5;"></div>`);
+  const tactile = () => scene('#FFF4F0', `<div style="${A}left:30%;top:12px;width:40%;height:40px;border-radius:46% 54% 52% 48%/58% 46% 54% 42%;background:#FF7A59;box-shadow:inset -4px -6px 10px rgba(180,40,10,.35),inset 4px 5px 8px rgba(255,255,255,.6);"></div>`);
+  const antipolish = () => scene('#F4F1EA', `<div style="${A}left:20%;top:14px;width:52%;height:34px;background:#fff;border:2px solid #111;transform:rotate(-2deg);"></div><div style="${A}left:26%;top:26px;width:32%;height:4px;background:#FF3B30;transform:rotate(-2deg);"></div>`);
+  const y2k = () => scene('linear-gradient(135deg,#C0C8D8,#EAF0FB,#9FB2CF)', `<div style="${A}left:24%;top:16px;width:44%;height:30px;border-radius:15px;background:linear-gradient(180deg,#fff,#B7C6E2);border:1.5px solid #7E93B8;"></div><div style="${A}right:16%;top:12px;color:#4318FF;font-size:15px;">✦</div>`);
+  const vapor = () => scene('linear-gradient(180deg,#2D1B69 0%,#B24592 100%)', `<div style="${A}left:50%;top:8px;width:26px;height:26px;margin-left:-13px;border-radius:50%;background:linear-gradient(180deg,#FFD319,#FF2975);"></div><div style="${A}left:0;right:0;bottom:0;height:22px;background:repeating-linear-gradient(90deg,rgba(0,229,255,.5) 0 1.5px,transparent 1.5px 12px),repeating-linear-gradient(0deg,rgba(0,229,255,.5) 0 1.5px,transparent 1.5px 8px);transform:perspective(40px) rotateX(38deg);"></div>`);
+  const memphis = () => scene('#FFF8E7', `<div style="${A}left:16%;top:14px;width:20px;height:20px;border-radius:50%;background:#FF6B9D;"></div><div style="${A}left:44%;top:26px;width:22px;height:22px;background:#4ECDC4;transform:rotate(18deg);"></div><svg style="${A}right:14%;top:14px;" width="30" height="18"><polyline points="0,14 6,4 12,14 18,4 24,14 30,4" fill="none" stroke="#111" stroke-width="2.5"/></svg>`);
+  const dimensional = () => scene('#EDF1F9', [0,1,2].map(i=>`<div style="${A}left:${22+i*7}%;top:${26-i*7}px;width:44%;height:32px;border-radius:9px;background:#fff;border:1px solid #E0E5F2;box-shadow:0 ${8-i*2}px ${14-i*3}px rgba(112,144,176,.${3-i});"></div>`).join(''));
+  const parallaxSc = () => scene('linear-gradient(180deg,#B7D3F3,#E8F1FC)', `<div style="${A}left:0;right:0;bottom:0;height:20px;background:#5B87B5;border-radius:100% 100% 0 0/38px 38px 0 0;"></div><div style="${A}left:14%;bottom:6px;width:72%;height:16px;background:#2E5B85;border-radius:100% 100% 0 0/30px 30px 0 0;"></div><div style="${A}right:20%;top:9px;width:14px;height:14px;border-radius:50%;background:#FFD319;"></div>`);
+  const biomimetic = () => scene('#EAF3EE', [0,1,2,3,4].map(i=>`<div style="${A}left:${14+i*15}%;top:${16+((i*11)%20)}px;width:${14+(i%3)*5}px;height:${14+((i+1)%3)*5}px;border-radius:50% 46% 54% 50%;background:rgba(21,128,61,.${3+i});border:1px solid #15803D;"></div>`).join(''));
+  const chaos = () => scene('#FDE047', `<div style="${A}left:10%;top:10px;width:34%;height:22px;background:#FF2975;transform:rotate(-7deg);"></div><div style="${A}left:36%;top:22px;width:34%;height:22px;background:#00E5FF;transform:rotate(5deg);"></div><div style="${A}right:9%;top:8px;font-size:16px;">⚡</div><div style="${A}right:22%;bottom:6px;width:26%;height:16px;background:#7C3AED;transform:rotate(-4deg);"></div>`);
+  const kineticTypo = () => scene('#111', `<div style="${A}left:12%;top:12px;font-weight:900;font-size:19px;color:#fff;letter-spacing:-1px;">MOVE</div><div style="${A}left:24%;top:32px;font-weight:900;font-size:19px;color:#4318FF;letter-spacing:-1px;">MOVE</div><div style="${A}left:36%;top:52px;font-weight:900;font-size:19px;color:#fff;opacity:.3;letter-spacing:-1px;transform:translateY(-14px);">MOVE</div>`);
+  const exagMin = () => scene('#fff', `<div style="${A}left:12%;bottom:10px;font-weight:900;font-size:34px;color:#111;letter-spacing:-2px;">Aa</div><div style="${A}right:14%;top:14px;width:7px;height:7px;border-radius:50%;background:#111;"></div>`);
+  const boldPoster = () => scene('#111', `<div style="${A}left:10%;top:8px;font-weight:900;font-size:26px;color:#FDE047;letter-spacing:-1px;line-height:.9;">BOLD<br>TYPE</div>`);
+  const bauhaus = () => scene('#F5EFE0', `<div style="${A}left:16%;top:16px;width:26px;height:26px;border-radius:50%;background:#D23A2E;"></div><div style="${A}left:44%;top:16px;width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-bottom:27px solid #2960A8;"></div><div style="${A}right:14%;top:22px;width:22%;height:14px;background:#E9B32A;"></div>`);
+  const defi = () => scene('#0B0E17', `<div style="${A}left:18%;top:18px;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#F7931A,#FFD166);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#3B2200;">₿</div><svg style="${A}right:12%;top:14px;" width="70" height="36" viewBox="0 0 70 36"><polyline fill="none" stroke="#22C55E" stroke-width="2.5" points="0,30 14,22 28,26 42,12 56,16 70,4"/></svg>`);
+  const enterpriseM = () => phone(`<div style="position:absolute;left:3px;top:4px;width:26px;height:4px;background:#4318FF;border-radius:2px;"></div>` + [0,1,2].map(i=>`<div style="position:absolute;left:3px;top:${12+i*8}px;width:26px;height:5px;background:#EDF1F9;border-radius:2px;"></div>`).join(''));
+  const claymo = () => phone([0,1].map(i=>`<div style="position:absolute;left:4px;top:${6+i*22}px;width:24px;height:17px;border-radius:8px;background:${['#8B7CFF','#FFB547'][i]};box-shadow:inset 2px 2px 3px rgba(255,255,255,.6),inset -2px -2px 4px rgba(0,0,0,.25);"></div>`).join(''));
+  const neuMobile = () => phone(`<div style="position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:#E6E9F0;box-shadow:3px 3px 6px #c3c7d4,-3px -3px 6px #fff;"></div>`, '#E6E9F0');
+  const cyberHud = () => phone(`<div style="position:absolute;inset:0;background:#060A12;"></div><div style="position:absolute;left:4px;top:8px;width:24px;height:2px;background:#00E5FF;box-shadow:0 0 5px #00E5FF;"></div><div style="position:absolute;left:8px;top:20px;width:16px;height:16px;border-radius:50%;border:1.5px solid #FF2FB0;box-shadow:0 0 6px #FF2FB0;"></div><div style="position:absolute;left:4px;bottom:6px;width:18px;height:2px;background:#00E5FF;"></div>`);
+  const flatMobile = () => phone([['#2563EB',0],['#EA580C',1],['#059669',2]].map(([c,i])=>`<div style="position:absolute;left:4px;top:${6+i*16}px;width:24px;height:11px;border-radius:3px;background:${c};"></div>`).join(''));
+  const kineticBrutal = () => phone(`<div style="position:absolute;left:-4px;top:10px;width:44px;height:12px;background:#111;color:#FDE047;font-weight:900;font-size:8px;display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);">LOUD</div><div style="position:absolute;left:2px;bottom:8px;width:28px;height:8px;background:#FF2975;transform:rotate(4deg);"></div>`);
+  const saasMobile = () => phone(`<div style="position:absolute;left:3px;top:5px;width:26px;height:9px;border-radius:3px;background:#0B1220;"></div><svg style="position:absolute;left:3px;top:20px;" width="26" height="16" viewBox="0 0 26 16"><polyline fill="none" stroke="#4318FF" stroke-width="2" points="0,13 7,9 13,11 19,4 26,6"/></svg><div style="position:absolute;left:3px;bottom:5px;width:26px;height:6px;border-radius:2px;background:#EDF1F9;"></div>`);
+  const monoMobile = () => phone(`<div style="position:absolute;left:4px;top:6px;width:14px;height:18px;background:#000;"></div><div style="position:absolute;left:4px;top:30px;width:24px;height:2.5px;background:#000;"></div><div style="position:absolute;left:4px;top:37px;width:16px;height:2.5px;background:#000;opacity:.4;"></div>`);
+  const cinemaDark = () => phone(`<div style="position:absolute;inset:0;background:#0B0B12;"></div><div style="position:absolute;left:4px;top:8px;width:24px;height:12px;border-radius:3px;background:#1E293B;"></div><div style="position:absolute;left:4px;bottom:10px;width:18px;height:3px;border-radius:2px;background:#38BDF8;box-shadow:0 0 5px #38BDF8;"></div>`);
+  const terminalMobile = () => phone(`<div style="position:absolute;inset:0;background:#0A0F0A;"></div><div style="position:absolute;left:3px;top:6px;font-family:monospace;font-size:7px;color:#00FF41;">$&gt;_</div><div style="position:absolute;left:3px;top:18px;width:20px;height:2px;background:#00FF41;opacity:.6;"></div><div style="position:absolute;left:3px;top:24px;width:14px;height:2px;background:#00FF41;opacity:.4;"></div>`);
+  const mdYou = () => phone(`<div style="position:absolute;inset:0;background:#F2ECF9;"></div><div style="position:absolute;left:3px;top:6px;width:26px;height:14px;border-radius:8px 8px 3px 8px;background:#B69DF8;"></div><div style="position:absolute;left:3px;bottom:6px;width:12px;height:12px;border-radius:50%;background:#7D5260;"></div><div style="position:absolute;right:3px;bottom:6px;width:12px;height:12px;border-radius:4px;background:#CCC2DC;"></div>`);
+  const neoBrutalM = () => phone(`<div style="position:absolute;left:3px;top:7px;width:24px;height:14px;background:#7FFFD4;border:2px solid #000;box-shadow:2.5px 2.5px 0 #000;"></div><div style="position:absolute;left:3px;bottom:8px;width:24px;height:10px;background:#FDE047;border:2px solid #000;box-shadow:2.5px 2.5px 0 #000;"></div>`);
+  const posterM = () => phone(`<div style="position:absolute;inset:0;background:#111;"></div><div style="position:absolute;left:2px;top:6px;font-weight:900;font-size:11px;color:#FDE047;line-height:.95;">BIG<br>TXT</div>`);
+  const academiaM = () => phone(`<div style="position:absolute;inset:0;background:#F7F1E3;"></div><div style="position:absolute;left:3px;top:6px;width:24px;height:5px;background:#3E2C1C;"></div>` + [0,1,2].map(i=>`<div style="position:absolute;left:3px;top:${16+i*7}px;width:${24-i*5}px;height:2px;background:#3E2C1C;opacity:.45;"></div>`).join(''));
+  const sketchM = () => phone(`<div style="position:absolute;left:3px;top:6px;width:24px;height:16px;border:1.5px dashed #333;border-radius:60px 8px 50px 8px/8px 50px 8px 60px;"></div><div style="position:absolute;left:6px;bottom:8px;width:18px;height:2px;background:#333;transform:rotate(-2deg);"></div>`);
+  const bauhausM = () => phone(`<div style="position:absolute;left:4px;top:6px;width:12px;height:12px;border-radius:50%;background:#D23A2E;"></div><div style="position:absolute;right:4px;top:10px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:12px solid #2960A8;"></div><div style="position:absolute;left:4px;bottom:8px;width:22px;height:7px;background:#E9B32A;"></div>`);
+
+  const PREVIEWS = {
+    "Minimalism & Swiss Style": () => scene('#fff', `<div style="${A}left:16%;top:14px;width:34px;height:34px;background:#DC2626;"></div><div style="${A}left:44%;top:20px;width:38%;height:5px;background:#111;"></div><div style="${A}left:44%;top:34px;width:26%;height:5px;background:#111;opacity:.5;"></div>`),
+    "Neumorphism": () => neu('#E6E9F0','#c3c7d4','#ffffff'),
+    "Glassmorphism": () => glass('linear-gradient(135deg,#6A8CFF,#04BEFE)'),
+    "Brutalism": () => brutal('#FDE047','RAW'),
+    "3D & Hyperrealism": () => sphere('#A5B4FC','#4318FF','#EDF1F9'),
+    "Vibrant & Block-based": () => scene('#fff', ['#E11D48','#F59E0B','#2563EB','#7C3AED'].map((c,i)=>`<div style="${A}left:${i*25}%;top:0;bottom:0;width:25%;background:${c};"></div>`).join('')),
+    "Dark Mode (OLED)": () => darkGlow('#22C55E'),
+    "Accessible & Ethical": () => scene('#fff', `<div style="${A}left:14%;top:18px;width:30px;height:30px;border-radius:8px;background:#111;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:12px;">Aa</div><div style="${A}left:48%;top:22px;padding:4px 9px;border-radius:6px;background:#05CD99;color:#fff;font-weight:800;font-size:10px;">AAA</div><div style="${A}right:10%;top:24px;width:16px;height:16px;border-radius:4px;border:2.5px solid #4318FF;"></div>`),
+    "Claymorphism": () => clay('#EEF2FF','#8B7CFF','rgba(80,60,200,.4)'),
+    "Aurora UI": () => scene('linear-gradient(120deg,#7C3AED,#EC4899,#38BDF8)', `<div style="${A}top:-12px;left:18%;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.35);filter:blur(9px);"></div><div style="${A}bottom:-14px;right:22%;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.25);filter:blur(9px);"></div>`),
+    "Retro-Futurism": () => vapor(),
+    "Flat Design": () => blocks('#F4F7FE',['#2563EB','#EA580C','#059669']),
+    "Skeuomorphism": () => scene('linear-gradient(180deg,#D7D2C8,#B8B0A0)', `<div style="${A}left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:radial-gradient(circle at 34% 28%,#F5F1E8,#9A917E);box-shadow:0 5px 9px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.8);"></div><div style="${A}left:50%;top:31%;width:2.5px;height:9px;margin-left:-1px;background:#555;"></div>`),
+    "Liquid Glass": () => blob('linear-gradient(120deg,#C084FC,#38BDF8,#F0ABFC)'),
+    "Motion-Driven": () => scene('#0F172A', `<div style="${A}left:10%;top:26px;width:56%;height:13px;border-radius:7px;background:linear-gradient(90deg,rgba(124,58,237,0),#7C3AED);"></div><div style="${A}left:62%;top:21px;width:23px;height:23px;border-radius:50%;background:#A78BFA;box-shadow:0 0 15px #7C3AED;"></div>`),
+    "Micro-interactions": () => scene('#F4F7FE', `<div style="${A}left:13%;top:17px;width:30%;height:30px;border-radius:9px;background:#4318FF;"></div><div style="${A}right:13%;top:20px;width:30%;height:25px;border-radius:9px;background:#3311CC;box-shadow:inset 0 3px 6px rgba(0,0,0,.35);"></div><div style="${A}left:48%;top:28px;width:13px;height:2px;background:#A3AED0;"></div>`),
+    "Inclusive Design": () => scene('#F0F9FF', `<div style="${A}left:22%;top:16px;width:30px;height:30px;border-radius:50%;border:2.5px solid #0369A1;"></div><div style="${A}left:26.5%;top:23px;width:17px;height:17px;border-radius:50%;background:#0369A1;"></div><div style="${A}right:18%;top:20px;font-size:16px;color:#0369A1;font-weight:800;">♿</div>`),
+    "Zero Interface": () => zero(),
+    "Soft UI Evolution": () => scene('#F4F7FE', `<div style="${A}inset:13px;border-radius:12px;background:#fff;box-shadow:0 11px 22px rgba(112,144,176,.3);"></div>`),
+    "Hero-Centric Design": () => hero(),
+    "Conversion-Optimized": () => cta(),
+    "Feature-Rich Showcase": () => featureGrid(),
+    "Minimal & Direct": () => scene('#fff', `<div style="${A}left:26%;top:16px;width:48%;height:8px;border-radius:3px;background:#1B2559;"></div><div style="${A}left:37%;top:36px;width:26%;height:14px;border-radius:7px;background:#4318FF;"></div>`),
+    "Social Proof-Focused": () => testimonial(),
+    "Interactive Product Demo": () => demo(),
+    "Trust & Authority": () => shield(),
+    "Storytelling-Driven": () => story(),
+    "Data-Dense Dashboard": () => scene('#0B1220', [0,1,2,3,4,5].map(i=>`<div style="${A}left:${8+(i%3)*30}%;top:${10+Math.floor(i/3)*24}px;width:26%;height:19px;border-radius:4px;background:#131C2E;border:1px solid #233047;"></div>`).join('') + `<div style="${A}left:10%;top:14px;width:14%;height:3px;background:#22C55E;"></div>`),
+    "Heat Map & Heatmap Style": () => heatmap(),
+    "Executive Dashboard": () => gauge(),
+    "Real-Time Monitoring": () => pulse(),
+    "Drill-Down Analytics": () => scene('#fff', [0,1,2].map(i=>`<div style="${A}left:${14+i*10}%;top:${13+i*15}px;width:${52-i*14}%;height:10px;border-radius:3px;background:${['#4318FF','#6A5AE0','#A3AED0'][i]};"></div>`).join('') + `<div style="${A}right:16%;top:22px;font-size:15px;color:#4318FF;">↳</div>`),
+    "Comparative Analysis Dashboard": () => scene('#fff', `<div style="${A}left:18%;bottom:12px;width:14%;height:32px;border-radius:3px 3px 0 0;background:#A3AED0;"></div><div style="${A}left:36%;bottom:12px;width:14%;height:42px;border-radius:3px 3px 0 0;background:#4318FF;"></div><div style="${A}right:20%;top:14px;font-weight:800;font-size:12px;color:#05CD99;">+24%</div>`),
+    "Predictive Analytics": () => lineChart('#fff','#4318FF',true),
+    "User Behavior Analytics": () => funnel(),
+    "Financial Dashboard": () => candles(),
+    "Sales Intelligence Dashboard": () => scene('#fff', [0,1,2].map(i=>`<div style="${A}left:${12+i*28}%;top:16px;width:22%;height:32px;border-radius:6px;background:${['#EEF2FF','#E6FAF4','#FFF6E9'][i]};border:1px solid #E0E5F2;"></div>`).join('') + `<div style="${A}left:16%;top:24px;width:14%;height:4px;background:#4318FF;border-radius:2px;"></div>`),
+    "Neubrutalism": () => scene('#7FFFD4', `<div style="${A}left:22%;top:13px;width:48%;height:36px;background:#FDE047;border:3px solid #000;box-shadow:6px 6px 0 #000;border-radius:6px;"></div>`),
+    "Bento Box Grid": () => bento(),
+    "Y2K Aesthetic": () => y2k(),
+    "Cyberpunk UI": () => neonLines('#08080F','#FF2FB0','#00E5FF'),
+    "Organic Biophilic": () => nature(),
+    "AI-Native UI": () => chat(),
+    "Memphis Design": () => memphis(),
+    "Vaporwave": () => vapor(),
+    "Dimensional Layering": () => dimensional(),
+    "Exaggerated Minimalism": () => exagMin(),
+    "Kinetic Typography": () => kineticTypo(),
+    "Parallax Storytelling": () => parallaxSc(),
+    "Swiss Modernism 2.0": () => scene('#fff', `<div style="${A}left:16%;top:15px;width:36px;height:36px;background:#DC2626;"></div><div style="${A}left:44%;top:19px;width:40%;height:5px;background:#111;"></div><div style="${A}left:44%;top:33px;width:28%;height:5px;background:#111;"></div>`),
+    "HUD / Sci-Fi FUI": () => hud(),
+    "Pixel Art": () => pixels(),
+    "Bento Grids": () => bento(),
+    "Spatial UI (VisionOS)": () => spatial(),
+    "E-Ink / Paper": () => eink(),
+    "Gen Z Chaos / Maximalism": () => chaos(),
+    "Biomimetic / Organic 2.0": () => biomimetic(),
+    "Anti-Polish / Raw Aesthetic": () => antipolish(),
+    "Tactile Digital / Deformable UI": () => tactile(),
+    "Nature Distilled": () => nature(),
+    "Interactive Cursor Design": () => cursorScene(),
+    "Voice-First Multimodal": () => voice(),
+    "3D Product Preview": () => cube(),
+    "Gradient Mesh / Aurora Evolved": () => mesh(),
+    "Editorial Grid / Magazine": () => editorial('#fff','#111'),
+    "Chromatic Aberration / RGB Split": () => rgbsplit(),
+    "Vintage Analog / Retro Film": () => film(),
+    "Bauhaus (包豪斯)": () => bauhausM(),
+    "Minimalist Monochrome": () => monoMobile(),
+    "Modern Dark (Cinema Mobile)": () => cinemaDark(),
+    "SaaS Mobile (High-Tech Boutique)": () => saasMobile(),
+    "Terminal CLI (Mobile)": () => terminalMobile(),
+    "Kinetic Brutalism (Mobile)": () => kineticBrutal(),
+    "Flat Design Mobile (Touch-First)": () => flatMobile(),
+    "Material You (MD3 Mobile)": () => mdYou(),
+    "Neo Brutalism (Mobile)": () => neoBrutalM(),
+    "Bold Typography (Mobile Poster)": () => posterM(),
+    "Academia (Scholarly Mobile)": () => academiaM(),
+    "Cyberpunk Mobile HUD": () => cyberHud(),
+    "Bitcoin DeFi (Mobile)": () => defi(),
+    "Claymorphism (Mobile)": () => claymo(),
+    "Enterprise SaaS (Mobile)": () => enterpriseM(),
+    "Sketch Hand-Drawn (Mobile)": () => sketchM(),
+    "Neumorphism (Mobile)": () => neuMobile(),
+  };
+  function catPreview(en){
+    const fn = PREVIEWS[en];
+    if(!fn) return '';
+    return fn() + `<div style="text-align:right;font-size:10.5px;color:var(--muted2);margin-top:5px;">예시 · 참고용</div>`;
+  }
+
   let cur = "all";
   function renderTabs(){
     tabsEl.innerHTML = TYPES.map(([k,label]) =>
@@ -508,6 +683,7 @@ renderCards();
         </div>
         <p style="margin:0 0 5px;font-size:12.5px;line-height:1.6;color:var(--body);"><b style="color:#05CD99;">✓</b> ${e.good}</p>
         <p style="margin:0;font-size:12.5px;line-height:1.6;color:var(--muted);"><b style="color:#EE5D50;">✕</b> ${e.avoid}</p>
+        ${catPreview(e.en)}
       </div>`).join("");
   }
   renderTabs(); renderGrid();
